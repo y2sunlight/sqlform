@@ -6,21 +6,8 @@ function doFileChange()
     var sqlFile = document.getElementById('sql_files').value;
     if(!sqlFile) return;
 
-    var params = new FormData();
-    params.append('cmd', 'read');
-    params.append('f', sqlFile);
-
-    axios.post('sqlapi.php', params, {
-        headers: {
-            'Authorization': 'Bearer '+$('meta[name="api-token"]').attr('content')
-        }
-    })
-    .then(function (response) {
-        if (!checkResult(response)) return;
+    sqlapi('read', {f:sqlFile}, function (response) {
         document.getElementById('sqlText').value = response.data.text;
-    })
-    .catch(function (error) {
-        errorAlert(error);
     });
 }
 
@@ -30,20 +17,7 @@ function doFileChange()
 function doExec()
 {
     var sqlText = document.getElementById('sqlText').value;
-
-    var params = new FormData();
-    params.append('cmd', 'execute');
-    params.append('t', sqlText);
-    // params.append('f', 'sample1.sql');
-
-    axios.post('sqlapi.php', params, {
-        headers: {
-            'Authorization': 'Bearer '+$('meta[name="api-token"]').attr('content')
-        }
-    })
-    .then(function (response) {
-        if (!checkResult(response)) return;
-
+    sqlapi('execute', {t:sqlText}, function (response) {
         var html = "";
         for(var line of response.data.lines)
         {
@@ -92,47 +66,5 @@ function doExec()
             }
         }
         document.getElementById('result').innerHTML = html;
-    })
-    .catch(function (error) {
-        errorAlert(error);
     });
-}
-
-/**
- * 共通のレスポンスチェック
- * @param response
- * @returns
- */
-function checkResult(response)
-{
-    if (response.data.error!==0)
-    {
-        alert('Response Error');
-        return false;
-    }
-    return true;
-}
-
-/**
- * 共通のエラー処理
- * @param error
- * @returns
- */
-function errorAlert(error)
-{
-    if (error.response)
-    {
-        // サーバがステータスコードで応答
-        console.log(error.response.data);
-        console.log(error.response.status);
-        console.log(error.response.headers);
-        var msg = error.response.status + ' : ' + error.response.statusText + '\n' + error.response.data;
-        alert(msg);
-    }
-    else
-    {
-        // トリガーしたリクエストの設定に何かしらのエラーがある
-        console.log('Error', error.message);
-        alert(error.message);
-    }
 }

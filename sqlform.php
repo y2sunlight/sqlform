@@ -31,7 +31,8 @@ require 'utilities.php';
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-    <script src="<?php echo asset_get('js/main.js')?>"></script>
+    <script src="<?php echo asset_get('js/sqlapi.js')?>"></script>
+    <script src="<?php echo asset_get('js/action.js')?>"></script>
 </head>
 <body>
     <div style="width:800px;text-align:right;">
