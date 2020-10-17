@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Gets an array of SQL statemnets from a file.
  *
@@ -36,3 +35,45 @@ function array_get_sql(string $text=''):array
     });
     return $sql;
 }
+
+/**
+ * Generate an API token.
+ *
+ * @param string $filename
+ * @return string URL
+ */
+function generate_api_token():string
+{
+    $str = getenv('APP_SECRET').session_id();
+    $_SESSION['API_TOKEN'] = sha1($str);
+    return $_SESSION['API_TOKEN'];
+}
+
+/**
+ * Comfirm the API token.
+ *
+ * @return bool
+ */
+function comfirm_api_token():bool
+{
+    $headers = getallheaders();
+    if (!isset($headers['Authorization'])) return false;
+    list($bearer, $token) = preg_split('/[\s,]+/', $headers['Authorization']);
+
+    return
+        isset($bearer) && (strtolower($bearer) === 'bearer') &&
+        isset($token) && ($token === $_SESSION['API_TOKEN']);
+}
+
+/**
+ * Gets the versioned asset URL.
+ *
+ * @param string $filename
+ * @return string URL
+ */
+function asset_get(string $filename):string
+{
+    $modified_at = (@filemtime(getenv('APP_DIR')."/{$filename}"));
+    return "{$filename}?v={$modified_at}";
+}
+

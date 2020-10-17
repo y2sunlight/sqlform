@@ -1,7 +1,14 @@
+<?php
+require 'config.php';
+session_start();
+
+require 'utilities.php';
+?>
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
+    <meta name="api-token" content="<?php echo generate_api_token()?>">
     <title>SqlForm</title>
 
     <style>
@@ -14,123 +21,17 @@
         .type-error{color:red}
     </style>
 
+    <!-- stylesheet -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link href="<?php echo asset_get('css/main.css')?>" rel="stylesheet">
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-    <script type="text/javascript">
-    function doFileChange()
-    {
-        var sqlFile = document.getElementById('sql_files').value;
-        if(!sqlFile) return;
-
-        var params = new FormData();
-        params.append('cmd', 'read');
-        params.append('f', sqlFile);
-
-        axios.post('sqlapi.php', params)
-        .then(function (response) {
-
-            document.getElementById('sqlText').value = response.data.text;
-        })
-        .catch(function (error) {
-
-            if (error.response)
-            {
-                // サーバがステータスコードで応答
-                console.log(error.response.data);
-                console.log(error.response.status);
-                console.log(error.response.headers);
-                var msg = error.response.status + ' : ' + error.response.statusText + '\n' + error.response.data;
-                alert(msg);
-            }
-            else
-            {
-                // トリガーしたリクエストの設定に何かしらのエラーがある
-                console.log('Error', error.message);
-                alert(error.message);
-            }
-        });
-    }
-
-    function doExec()
-    {
-        var sqlText = document.getElementById('sqlText').value;
-
-        var params = new FormData();
-        params.append('cmd', 'execute');
-        params.append('t', sqlText);
-        // params.append('f', 'sample1.sql');
-
-        axios.post('sqlapi.php', params)
-        .then(function (response) {
-
-            var html = "";
-            for(var line of response.data.lines)
-            {
-                switch(line.type)
-                {
-                    case 0:	// sql文
-                        html += '<pre class="type-sql">' + line.line + '</pre>';
-                        break;
-                    case 1:	// 実行結果
-                        html += '<pre class="type-result">Result : ' + line.line + '</pre>';
-                        break;
-                    case 2:	// 検索結果
-
-                        if(line.line.length>0)
-                        {
-                            html += '<table class="type-query">';
-
-                            // カラム名の表示
-                            html += '<tr>';
-                            for(var key in line.line[0])
-                            {
-                                html += '<th>' + key + '</th>'
-                            }
-                            html += '</tr>';
-
-                            // 行の表示
-                            for(var rows of line.line)
-                            {
-                                html += '<tr>';
-                                for(var key in rows)
-                                {
-                                    html += '<td>' + rows[key] + '</td>'
-                                }
-                                html += '</tr>';
-                            }
-
-                            html += '</table>';
-                        }
-                        // 件数
-                        html += '<pre class="type-result">Result : ' + line.line.length + '件</pre>'
-
-                        break;
-                    case -1:	// エラー
-                        html += '<pre class="type-error">Error : ' + line.line + '</pre>';
-                        break;
-                }
-            }
-            document.getElementById('result').innerHTML = html;
-        })
-        .catch(function (error) {
-
-            if (error.response)
-            {
-                // サーバがステータスコードで応答
-                console.log(error.response.data);
-                console.log(error.response.status);
-                console.log(error.response.headers);
-                var msg = error.response.status + ' : ' + error.response.statusText + '\n' + error.response.data;
-                alert(msg);
-            }
-            else
-            {
-                // トリガーしたリクエストの設定に何かしらのエラーがある
-                console.log('Error', error.message);
-                alert(error.message);
-            }
-        });
-    }
-    </script>
+    <script src="<?php echo asset_get('js/main.js')?>"></script>
 </head>
 <body>
     <div style="width:800px;text-align:right;">

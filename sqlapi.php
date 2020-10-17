@@ -1,11 +1,17 @@
 <?php
-require 'utilities.php';
-require 'sqlexec.php';
-
 /*
  * 設定ファイルの読み込み
  */
 $config = require 'config.php';
+session_start();
+
+require 'utilities.php';
+require 'sqlexec.php';
+
+/*
+ * API 認証
+ */
+ if (!comfirm_api_token()) errorExit('Unauthorized', 401);
 
 /*
  * API コマンド実行
@@ -274,6 +280,7 @@ function deleleSqlFile(array $config)
 
 /**
  * SQL ファイルパスの取得
+ *
  * @param array $config
  * @return string
  */
@@ -284,11 +291,13 @@ function getSqlPath(array $config)
 
 /**
  * エラー終了
+ *
  * @param string $message
+ * @param int $response_code
  */
-function errorExit(string $message='')
+function errorExit(string $message='', $response_code=400)
 {
-    http_response_code(400);
+    http_response_code($response_code);
     die($message);
 }
 
