@@ -44,8 +44,10 @@ function array_get_sql(string $text=''):array
  */
 function generate_api_token():string
 {
-    $str = getenv('APP_SECRET').session_id();
-    $_SESSION['API_TOKEN'] = sha1($str);
+    if (!array_key_exists('API_TOKEN', $_SESSION))
+    {
+        $_SESSION['API_TOKEN'] = base64_encode(openssl_random_pseudo_bytes(32));
+    }
     return $_SESSION['API_TOKEN'];
 }
 

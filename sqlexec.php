@@ -7,11 +7,11 @@ define("TEXT_TYPE_ERROR",       -1); // エラー
 
 /**
  * SQLスクリプトの実行
- * @param mysqli $mysqli　MySQLiオブジェクト
+ * @param PDO $db　PDOオブジェクト
  * @param string[] $sql_text SQL文の配列
  * @return array 実行結果
  */
-function executeSqlScript(mysqli $mysqli, array $sql_text=[])
+function executeSqlScript(PDO $db, array $sql_text=[])
 {
     $json = new stdClass();
     $json->lines = [];
@@ -38,17 +38,17 @@ function executeSqlScript(mysqli $mysqli, array $sql_text=[])
         $time1 =  microtime_as_float();
         if (preg_match("/^(select|show)\s/i", $sql))
         {
-            $res = DoSelect($mysqli, $sql);
+            $res = DoSelect($db, $sql);
             $json->lines[] = $res;
             if ($res->type==TEXT_TYPE_ERROR) break;
         }
         else
         {
-            $res = $mysqli->query($sql);
-            if($res===false)
+            $db->exec($sql);
+            $info = $db->errorInfo();
+            if(!empty($info) && $info[0]!=='00000')
             {
-                $json->lines[] = OutputError($mysqli->error);
-                $json->error = 1;
+                $json->lines[] = OutputError($info[2]??'exec() error');
                 break;
             }
             $json->lines[] = OutputExecResult('ok');
@@ -72,23 +72,24 @@ function microtime_as_float()
 
 /**
  * SELECT文の実行
- * @param mysqli $mysqli　MySQLiオブジェクト
+ * @param PDO $db　PDOオブジェクト
  * @param string $sql SQL文
  * @return stdClass JSON Line
  */
-function DoSelect( mysqli $mysqli, string $sql )
+function DoSelect(PDO $db, string $sql)
 {
     // 検索実行
-    $res = $mysqli->query($sql);
-    if($res===false)
+    $sth= $db->query($sql);
+    if($sth===false)
     {
-        return OutputError($mysqli->error);
+        $info = $db->errorInfo();
+        return OutputError($info[2]??'query() error');
     }
 
-    // 検索実行の出力
-    if ($rows = $res->fetch_all(MYSQLI_ASSOC))
+    $arr=$sth->fetchAll(PDO::FETCH_ASSOC);
+    if (!empty($arr))
     {
-        $line = outputJsonLine(TEXT_TYPE_QUERY_RESULT, $rows);
+        $line = outputJsonLine(TEXT_TYPE_QUERY_RESULT, $arr);
     }
     else
     {

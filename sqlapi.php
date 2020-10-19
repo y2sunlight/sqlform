@@ -6,12 +6,16 @@ $config = require 'config.php';
 session_start();
 
 require 'utilities.php';
+require 'connect.php';
 require 'sqlexec.php';
 
 /*
  * API 認証
  */
- if (!comfirm_api_token()) errorExit('Unauthorized', 401);
+if (!getenv('APP_NO_API_AUTH'))
+{
+    if (!comfirm_api_token()) errorExit('Unauthorized', 401);
+}
 
 /*
  * API コマンド実行
@@ -95,36 +99,14 @@ function ecexuteSql(array $config)
     }
 
     // データベース接続
-    $mysqli = @new mysqli(
-        $config['database']['host'],
-        $config['database']['username'],
-        $config['database']['password'],
-        $config['database']['database_name'],
-        $config['database']['port']);
-
-    if( $mysqli->connect_errno )
-    {
-        errorExit($mysqli->connect_errno . ' : ' . $mysqli->connect_error);
-    }
-
-    // 初期SQLコマンドの読み込み
-    if (isset($config['database']['initial_statements']))
-    {
-        foreach($config['database']['initial_statements'] as $statement)
-        {
-            $mysqli->query($statement);
-        }
-    }
+    $db = connect_database($config);
 
     // SQLスクリプトの実行
-    $json = executeSqlScript($mysqli, $sql_array);
+    $json = executeSqlScript($db, $sql_array);
 
     // レスポンス処理
     header("Content-Type: application/json; charset=utf-8");
     echo json_encode($json, JSON_PRETTY_PRINT);
-
-    // データベースの切断
-    $mysqli->close();
     exit();
 }
 
