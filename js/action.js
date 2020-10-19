@@ -1,10 +1,26 @@
 /**
+ * SQLファイル一覧
+ */
+function doSqlFiles()
+{
+    sqlapi('list', {}, function (response) {
+        var html = '<option value="">(選択して下さい)</option>';
+        for(var file of response.data.files)
+        {
+            html += '<option value=' + file + '>' + file + '</option>'
+        }
+        document.getElementById('sql_files').innerHTML = html;
+    });
+}
+
+/**
  * SQLファイル変更
  */
 function doFileChange()
 {
     var sqlFile = document.getElementById('sql_files').value;
     if(!sqlFile) return;
+    document.getElementById('filename').value = sqlFile;
 
     sqlapi('read', {f:sqlFile}, function (response) {
         document.getElementById('sqlText').value = response.data.text;

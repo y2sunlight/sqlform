@@ -31,23 +31,28 @@ require 'utilities.php';
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="<?php echo asset_get('js/main.js')?>"></script>
     <script src="<?php echo asset_get('js/sqlapi.js')?>"></script>
     <script src="<?php echo asset_get('js/action.js')?>"></script>
 </head>
 <body>
-    <div style="width:800px;text-align:right;">
-        <select name="sql_files" id="sql_files" onchange="doFileChange()">
-            <option value="">(選択して下さい)</option>
-            <option value="sample.sql">sample.sql</option>
-            <option value="syaval1.sql">syaval1.sql</option>
-            <option value="syaval2.sql">syaval2.sql</option>
-            <option value="syaval3.sql">syaval3.sql</option>
-        </select>
-        <button type="button" onclick="doExec()">実行</button>
-    </div>
-    <div style="width:800px;">
-        <textarea name="sqlText" id="sqlText" style="width:100%; height:200px">SELECT * FROM syain;</textarea>
-        <div id="result" style="overflow:auto; width:100%; height:300px; border:solid 1px #aaa;padding:5px;"></div>
+    <nav class="navbar navbar-expand navbar-dark bg-dark">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item mr-1"><select name="sql_files" id="sql_files" class="form-control" onchange="doFileChange()"></select></li>
+            <li class="nav-item mr-1"><button type="button" class="btn btn-primary" onclick="alert('新規')">新規</button></li>
+            <li class="nav-item mr-1"><button type="button" class="btn btn-primary" onclick="alert('保存')">保存</button></li>
+            <li class="nav-item mr-1"><button type="button" class="btn btn-primary" onclick="alert('名前を付けて保存')">名前を付けて保存</button></li>
+            <li class="nav-item mr-1"><button type="button" class="btn btn-primary" onclick="alert('削除')">削除</button></li>
+        </ul>
+        <ul class="navbar-nav">
+            <li class="nav-item mr-1"><input type="text" name="filename" id="filename" class="form-control" value=""></li>
+            <li class="nav-item"><button type="button" class="btn btn-primary" onclick="doExec()">実行</button></li>
+        </ul>
+    </nav>
+
+    <div class="container-fluid mt-2">
+        <textarea name="sqlText" id="sqlText" class="form-control" style="height:200px;">SELECT * FROM syain;</textarea>
+        <div id="result" class="mt-1 border border-secondary rounded p-1" style="overflow:auto; min-height:300px; max-height:500px;"></div>
     </div>
 </body>
 </html>

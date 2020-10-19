@@ -9,7 +9,10 @@ function sqlapi(cmd, args, callback)
     var params = new FormData();
     params.append('cmd', cmd);
     for(key in args) {
-        params.append(key, args[key]);
+        if (args.hasOwnProperty(key))
+        {
+            params.append(key, args[key]);
+        }
     }
 
     axios.post('sqlapi.php', params, {
