@@ -269,7 +269,8 @@ function deleleSqlFile(array $config)
  */
 function getSqlPath(array $config)
 {
-    return ($config['sql_file']['path'] ?? '.');
+    $sql_path = $config['sql_file']['path'] ?? '.';
+    return str_replace('{database}', $config['database'], $sql_path);
 }
 
 /**

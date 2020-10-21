@@ -13,7 +13,7 @@ putenv('APP_SECRET=SetA32-byteRandomCharacterString');
 return
 [
     // データベース接続先設定
-    'database'=>'mysql',
+    'database'=>'sqlite',
     'connections' =>
     [
         'mysql' => [
@@ -30,6 +30,6 @@ return
     ],
     // SQLファイル設定
     'sql_file' =>[
-        'path' => dirname(__FILE__) . "/sql/mysql",
+        'path' => dirname(__FILE__) . "/sql/{database}",
     ],
 ];
