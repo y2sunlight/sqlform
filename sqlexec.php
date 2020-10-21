@@ -1,12 +1,13 @@
 <?php
 // テキストタイプ
-define("TEXT_TYPE_SQL",          0); // SQL文
+define("TEXT_TYPE_NO_RESULT",    0); // 結果無し
 define("TEXT_TYPE_EXEC_RESULT",  1); // 実行結果
 define("TEXT_TYPE_QUERY_RESULT", 2); // 検索結果
 define("TEXT_TYPE_ERROR",       -1); // エラー
 
 /**
  * SQLスクリプトの実行
+ *
  * @param PDO $db　PDOオブジェクト
  * @param string[] $sql_text SQL文の配列
  * @return array 実行結果
@@ -14,47 +15,64 @@ define("TEXT_TYPE_ERROR",       -1); // エラー
 function executeSqlScript(PDO $db, array $sql_text=[])
 {
     $json = new stdClass();
-    $json->lines = [];
     $json->error = 0;
     $json->execTime = '0';
+    $json->lines = [];
 
     $sqltime = 0;
     foreach( $sql_text as $sql )
     {
-        if ( !$sql ) continue; # 空行
-
-        // SQL文表示
-        $json->lines[] = OutputSql($sql);
-
-        // 特別なEVAL文の実行
-        if ( preg_match( "/^eval\s+(.+)/i", $sql, $reg ) )
+        try
         {
-            $ret = eval("{$reg[1]};");
-            if (isset($ret)) $json->lines[] = OutputExecResult($ret);
-            continue;
-        }
-
-        // SELECT文と非SELECT文で処理を分ける
-        $time1 =  microtime_as_float();
-        if (preg_match("/^(select|show)\s/i", $sql))
-        {
-            $res = DoSelect($db, $sql);
-            $json->lines[] = $res;
-            if ($res->type==TEXT_TYPE_ERROR) break;
-        }
-        else
-        {
-            $db->exec($sql);
-            $info = $db->errorInfo();
-            if(!empty($info) && $info[0]!=='00000')
+            // 空行の出力
+            if ($sql && ($sql[0]=='#'))
             {
-                $json->lines[] = OutputError($info[2]??'exec() error');
-                break;
+                $json->lines[] = OutputNoResult(substr($sql,1));
+                continue;
             }
-            $json->lines[] = OutputExecResult('ok');
+
+            // 特別なEVAL文の実行
+            if ( preg_match( "/^eval\s+(.+)/i", $sql, $reg ) )
+            {
+                $ret = eval("{$reg[1]};");
+                if (isset($ret))
+                {
+                    $json->lines[] = OutputExecResult($sql, $ret);
+                }
+                else
+                {
+                    $json->lines[] = OutputNoResult($sql);
+                }
+                continue;
+            }
+
+            // SELECT文と非SELECT文で処理を分ける
+            $time1 =  microtime_as_float();
+            if (preg_match("/^(select|show)\s/i", $sql))
+            {
+                $res = DoSelect($db, $sql);
+                $json->lines[] = $res;
+                if ($res->type==TEXT_TYPE_ERROR) break;
+            }
+            elseif($sql)
+            {
+                $db->exec($sql);
+                $info = $db->errorInfo();
+                if(!empty($info) && $info[0]!=='00000')
+                {
+                    $json->lines[] = OutputError($sql, $info[2]??'exec() error');
+                    break;
+                }
+                $json->lines[] = OutputExecResult($sql, 'ok');
+            }
+            $time2 =  microtime_as_float();
+            $sqltime += ($time2-$time1);
         }
-        $time2 =  microtime_as_float();
-        $sqltime += ($time2-$time1);
+        catch(Throwable $e)
+        {
+            $json->lines[] = OutputError($sql, $e->getMessage());
+            break;
+        }
     }
     $json->execTime = sprintf('%01.03f', $sqltime);
     return $json;
@@ -62,6 +80,7 @@ function executeSqlScript(PDO $db, array $sql_text=[])
 
 /**
  * マイクロ秒取得
+ *
  * @return float
  */
 function microtime_as_float()
@@ -72,6 +91,7 @@ function microtime_as_float()
 
 /**
  * SELECT文の実行
+ *
  * @param PDO $db　PDOオブジェクト
  * @param string $sql SQL文
  * @return stdClass JSON Line
@@ -83,58 +103,66 @@ function DoSelect(PDO $db, string $sql)
     if($sth===false)
     {
         $info = $db->errorInfo();
-        return OutputError($info[2]??'query() error');
+        return OutputError($sql, $info[2]??'query() error');
     }
 
     $arr=$sth->fetchAll(PDO::FETCH_ASSOC);
     if (!empty($arr))
     {
-        $line = outputJsonLine(TEXT_TYPE_QUERY_RESULT, $arr);
+        $line = outputJsonLine($sql, TEXT_TYPE_QUERY_RESULT, $arr);
     }
     else
     {
-        $line = outputJsonLine(TEXT_TYPE_QUERY_RESULT, []);
+        $line = outputJsonLine($sql, TEXT_TYPE_QUERY_RESULT, []);
     }
     return $line;
 }
 
 /**
- * SQL文の出力
- * @param string $text テキスト
+ * 結果無しの出力
+ *
+ * @param string $command コマンド
  */
-function OutputSql($text)
+function OutputNoResult($command)
 {
-    return outputJsonLine(TEXT_TYPE_SQL, $text);
+    return outputJsonLine($command, TEXT_TYPE_NO_RESULT);
 }
 
 /**
  * 実行結果の出力
- * @param string $text テキスト
+ *
+ * @param string $command コマンド
+ * @param string $result 結果
  */
-function OutputExecResult($text)
+function OutputExecResult(string $command, string $result)
 {
-    return outputJsonLine(TEXT_TYPE_EXEC_RESULT, $text);
+    return outputJsonLine($command, TEXT_TYPE_EXEC_RESULT, $result);
 }
 
 /**
  * エラーの出力
- * @param string $text テキスト
+ *
+ * @param string $command コマンド
+ * @param string $result 結果
  */
-function OutputError($text)
+function OutputError(string $command, string $result)
 {
-    return outputJsonLine(TEXT_TYPE_ERROR, $text);
+    return outputJsonLine($command, TEXT_TYPE_EXEC_RESULT, $result);
 }
 
 /**
- * JSON Line出力
- * @param int $type Line Type
- * @param string $line Line Data
+ * JSON result出力
+ *
+ * @param string $command コマンド
+ * @param int $type 結果タイプ
+ * @param string $result 結果データ
  * @return stdClass JSON Line
  */
-function outputJsonLine(int $type, $line=null)
+function outputJsonLine(string $command, int $type, $result=null)
 {
     $obj = new stdClass();
+    $obj->command = $command;
     $obj->type = $type;
-    $obj->line = $line;
+    $obj->result = $result;
     return $obj;
 }

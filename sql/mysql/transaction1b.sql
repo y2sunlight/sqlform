@@ -1,4 +1,4 @@
--- テーブル作成
+-- テーブル作成 -------------------------
 DROP TABLE IF EXISTS syain;
 CREATE TABLE syain (
   syain_no int(10) NOT NULL,
@@ -7,10 +7,10 @@ CREATE TABLE syain (
   PRIMARY KEY (syain_no)
 );
 INSERT INTO syain VALUES(1,'Suzuki',50);
+#;
 
--- トランザクション開始
-#SET AUTOCOMMIT = 0;
-START TRANSACTION;
+-- トランザクション開始 ------------------
+EVAL $db->beginTransaction();
 SELECT * FROM syain;
 
 -- テーブルの更新
@@ -18,6 +18,6 @@ UPDATE syain SET syain_age = syain_age + 1;
 INSERT INTO syain VALUES(2,'Yamamoto',30);
 SELECT * FROM syain;
 
--- トランザクション終了
-ROLLBACK;
+-- トランザクション終了 -----------------
+EVAL $db->rollBack();
 SELECT * FROM syain;

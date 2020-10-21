@@ -1,4 +1,4 @@
--- 自動コミットモード
+-- 自動コミットモード -------------------
 -- レコード挿入
 INSERT INTO syain VALUES(2,'Yamamoto',30);
 SELECT * FROM syain;

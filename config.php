@@ -30,6 +30,6 @@ return
     ],
     // SQLファイル設定
     'sql_file' =>[
-        'path' => dirname(__FILE__) . "/sql",
+        'path' => dirname(__FILE__) . "/sql/mysql",
     ],
 ];

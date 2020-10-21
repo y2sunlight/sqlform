@@ -65,14 +65,15 @@ switch($_REQUEST['cmd'])
  * {
  *     "error": 0,
  *     "execTime":"0.123",
- *     "lines": [
+ *     "lines: [
  *          {
+ *              "command: "sql statement"
  *              "type": 0,
- *              "line": "SQL Statement"
+ *              "result": "ok"
  *          }
  *      ]
  * }
- * type: SQL文(0) 実行結果(1) 検索結果(2) エラー(-1)
+ * type: 結果無し(0) 実行結果(1) 検索結果(2) エラー(-1)
  *
  * @param array $config
  */
