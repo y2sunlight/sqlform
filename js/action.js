@@ -56,7 +56,7 @@ function doDelete()
     var fileName = document.getElementById('filename').value;
     if(!fileName) return false;
 
-    if(confirm(fileName + ' を削除します。よろしいですか？') == true) {
+    if(confirm(`${fileName} を削除します。よろしいですか？`) == true) {
         sqlapi('delete', {f:fileName}, function (response) {
             document.getElementById('filename').value = "";
             refreshList();
@@ -76,10 +76,10 @@ function doExec()
         var html = "";
         for(var line of response.data.lines) {
             // sql文
-            html += '<pre class="type-sql">' + line.command + '</pre>';
+            html += `<pre class="type-sql">${line.command}</pre>`;
             switch(line.type) {
                 case 1:	// 実行結果
-                    html += '<pre class="type-result">Result : ' + line.result + '</pre>';
+                    html += `<pre class="type-result">Result : ${line.result}</pre>`;
                     break;
                 case 2:	// 検索結果
 
@@ -91,7 +91,7 @@ function doExec()
                         html += '<tr>';
                         for(var key in line.result[0])
                         {
-                            html += '<th>' + key + '</th>'
+                            html += `<th>${key}</th>`
                         }
                         html += '</tr>';
 
@@ -101,7 +101,7 @@ function doExec()
                             html += '<tr>';
                             for(var key in rows)
                             {
-                                html += '<td>' + rows[key] + '</td>'
+                                html += `<td>${rows[key]}</td>`
                             }
                             html += '</tr>';
                         }
@@ -109,11 +109,11 @@ function doExec()
                         html += '</table>';
                     }
                     // 件数
-                    html += '<pre class="type-result">Result : ' + line.result.length + '件</pre>'
+                    html += `<pre class="type-result">Result : ${line.result.length}件</pre>`
 
                     break;
                 case -1:	// エラー
-                    html += '<pre class="type-error">Error : ' + line.result + '</pre>';
+                    html += `<pre class="type-error">Error : ${line.result}</pre>`;
                     break;
             }
         }
@@ -150,7 +150,7 @@ function createOption(response)
 {
     var html = '<option value="">(選択して下さい)</option>';
     for(var file of response.data.files) {
-        html += '<option value=' + file + '>' + file + '</option>'
+        html += `<option value=${file}>${file}</option>`
     }
     document.getElementById('sql_files').innerHTML = html;
 }
