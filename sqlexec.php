@@ -34,14 +34,24 @@ function executeSqlScript(PDO $db, array $sql_text=[])
             // 特別なEVAL文の実行
             if ( preg_match( "/^eval\s+(.+)/i", $sql, $reg ) )
             {
+                ob_start();
                 $ret = eval("{$reg[1]};");
                 if (isset($ret))
                 {
                     $json->lines[] = OutputExecResult($sql, $ret);
+                    ob_end_clean();
                 }
                 else
                 {
-                    $json->lines[] = OutputNoResult($sql);
+                    $out = ob_get_clean();
+                    if ($out)
+                    {
+                        $json->lines[] = OutputExecResult($sql, $out);
+                    }
+                    else
+                    {
+                        $json->lines[] = OutputNoResult($sql);
+                    }
                 }
                 continue;
             }

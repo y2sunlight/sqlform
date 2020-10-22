@@ -47,9 +47,20 @@ require 'utilities.php';
         </ul>
     </nav>
 
-    <div class="container-fluid mt-2">
-        <textarea name="sqlText" id="sqlText" class="form-control" style="height:200px;">SELECT * FROM table_name;</textarea>
-        <div id="result" class="mt-1 border border-secondary rounded p-1" style="overflow:auto; min-height:300px; max-height:500px;"></div>
+    <div class="container-fluid mt-2 mb-5">
+        <textarea name="sqlText" id="sqlText" class="form-control"></textarea>
+        <div id="result" class="mt-1 border border-secondary rounded p-1"></div>
     </div>
+
+    <footer class="fixed-bottom bg-light border p-2">
+        <div class="row">
+            <div class="col-8" id="message"></div>
+            <div class="col-4 text-right">
+                <ion-icon name="time-outline" class="ion-icon"></ion-icon>
+                <span id="exec-time" class="ion-text"></span>
+            </div>
+        </div>
+    </footer>
+
 </body>
 </html>

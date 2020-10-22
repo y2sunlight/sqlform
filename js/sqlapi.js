@@ -24,14 +24,14 @@ function sqlapi(cmd, args, on_success, on_failure)
             if(on_success!==undefined) on_success(response);
         } else {
             if (response.data.error===undefined) {
-                alert('Response Error');
+                errorAlert('Response Error');
             } else {
-            	if(on_failure!==undefined )on_failure(response);
+            	if(on_failure!==undefined ) on_failure(response);
             }
         }
     })
     .catch(function (error) {
-        errorAlert(error);
+    	errorProc(error);
     });
 }
 
@@ -39,18 +39,18 @@ function sqlapi(cmd, args, on_success, on_failure)
  * 共通のエラー処理
  * @param error axios エラーオブジェクト
  */
-function errorAlert(error)
+function errorProc(error)
 {
     if (error.response) {
         // サーバがステータスコードでエラー応答
         console.log(error.response.data);
         console.log(error.response.status);
         console.log(error.response.headers);
-        var msg = error.response.status + ' : ' + error.response.statusText + '\n' + error.response.data;
-        alert(msg);
+        var msg = error.response.status + ' ' + error.response.statusText + ': ' + error.response.data;
+        errorAlert(msg)
     } else {
         // トリガーしたリクエストの設定に何かしらのエラーがある
         console.log('Error', error.message);
-        alert(error.message);
+        errorAlert(error.message)
     }
 }

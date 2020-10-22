@@ -71,6 +71,8 @@ function doExec()
 {
     var sqlText = document.getElementById('sqlText').value;
     document.getElementById('result').innerHTML = '';
+    document.getElementById('message').innerHTML = 'Running ...';
+    document.getElementById('exec-time').innerHTML = '0.000 sec';
 
     sqlapi('execute', {t:sqlText}, function (response) {
         var html = "";
@@ -109,7 +111,7 @@ function doExec()
                         html += '</table>';
                     }
                     // 件数
-                    html += `<pre class="type-result">Result : ${line.result.length}件</pre>`
+                    html += `<pre class="type-result">Count : ${line.result.length}</pre>`
 
                     break;
                 case -1:	// エラー
@@ -118,6 +120,7 @@ function doExec()
             }
         }
         document.getElementById('result').innerHTML = html;
+        showFooter('ok', response.data.execTime);
     });
 }
 
