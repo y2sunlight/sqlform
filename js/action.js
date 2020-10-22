@@ -22,9 +22,9 @@ function doRead()
 }
 
 /**
- * SQLファイル書き込み
+ * SQLファイル上書き保存
  */
-function doWrite()
+function doSave()
 {
     var fileName = document.getElementById('filename').value;
     if(!fileName) return false;
@@ -46,6 +46,14 @@ function doWrite()
             }
         }
     );
+}
+
+/**
+ * SQLファイル名前を付けて保存
+ */
+function doSaveAs()
+{
+    alert("doSaveAs");
 }
 
 /**
