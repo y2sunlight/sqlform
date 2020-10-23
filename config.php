@@ -4,8 +4,7 @@
  */
 putenv('APP_VER=1.0.0');
 putenv('APP_DIR='.dirname(__FILE__));
-putenv('APP_NO_API_AUTH=1');
-putenv('APP_SECRET=SetA32-byteRandomCharacterString');
+putenv('APP_NO_API_AUTH=0');
 
 /*
  * 環境設定を返す
