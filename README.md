@@ -4,7 +4,7 @@ Sqlform はブラウザ上のフォームからSQLスクリプトを実行でき
 
 ## クイックスタート
 
-[リリース版](https://github.com/y2sunlight/sqlfile/releasess)をダウンロードし、適当な場所に解凍して下さい。
+[リリース版](https://github.com/y2sunlight/sqlform/releases)をダウンロードし、適当な場所に解凍して下さい。
 
 ダウンロードした `sqlform.php` ファイルの存在するディレクトリでPHPのビルトインサーバーを実行します。
 
