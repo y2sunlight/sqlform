@@ -21,12 +21,12 @@
     overflow-x: hidden !important; /* Removes margin in x direction */
 }
 
-table{border-collapse: collapse;}
+table {border-collapse: collapse;}
 table th, table td {border: solid 1px;}
-.type-sql{}
-.type-result{color:blue}
-.type-query{}
-.type-error{color:red}
+.type-sql {}
+.type-result {color:blue}
+.type-query {}
+.type-error {color:red}
 nav ion-icon {
   color: white;
   font-size:1.5em
@@ -41,8 +41,9 @@ footer ion-icon {
 
 .error {color:red}
 
-#sqlText{height:200px;}
-#result{min-height:300px;}
+#filename {background-color:lightcyan}
+#sqlText {height:200px;}
+#result {min-height:300px;}
 
 pre {margin-bottom: 0.1rem;}
 

@@ -49,14 +49,6 @@ function doSave()
 }
 
 /**
- * SQLファイル名前を付けて保存
- */
-function doSaveAs()
-{
-    alert("doSaveAs");
-}
-
-/**
  * SQLファイル削除
  */
 function doDelete()

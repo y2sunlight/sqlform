@@ -34,18 +34,17 @@ require 'utilities.php';
             <li class="nav-item mr-1"><select name="sql_files" id="sql_files" class="form-control" onchange="doRead()"></select></li>
         </ul>
         <ul class="navbar-nav">
-            <li class="nav-item mr-1"><input type="text" name="filename" id="filename" class="form-control"></li>
-            <li class="nav-item">
-                <button type="button" id="btn_save" class="btn btn-primary pb-0" onclick="doSave()" title="test"><ion-icon name="save"></ion-icon></button>
-            </li>
             <li class="nav-item mr-1">
-                <button type="button" id="btn_saveAs" class="btn btn-primary pb-0" onclick="doSaveAs()"><ion-icon name="save-outline"></ion-icon></button>
-            </li>
-            <li class="nav-item mr-1">
-                <button type="button" id="btn_delete" class="btn btn-primary pb-0" onclick="doDelete()"><ion-icon name="trash-outline"></ion-icon></button>
+                <input type="text" name="filename" id="filename" class="form-control" placeholder="untitled.sql">
             </li>
             <li class="nav-item">
-                <button type="button" id="btn_exec" class="btn btn-primary pb-0" onclick="doExec()"><ion-icon name="play-outline"></ion-icon></button>
+                <button type="button" id="btn_save" class="btn btn-primary pb-0" onclick="doSave()"><ion-icon name="save"></ion-icon></button>
+            </li>
+            <li class="nav-item mr-1">
+                <button type="button" id="btn_delete" class="btn btn-primary pb-0" onclick="doDelete()"><ion-icon name="trash"></ion-icon></button>
+            </li>
+            <li class="nav-item">
+                <button type="button" id="btn_exec" class="btn btn-primary pb-0" onclick="doExec()"><ion-icon name="play"></ion-icon></button>
             </li>
         </ul>
     </nav>
