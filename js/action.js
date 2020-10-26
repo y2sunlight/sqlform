@@ -37,15 +37,24 @@ function doSave()
         function (response) {
             if (response.data.error===1)
             {
-                // 上書き確認
-                if(confirm(`${fileName} は既に存在します。上書保存しますか。`) == true) {
-                    sqlapi('write', {f:fileName,t:sqlText}, function(response) {
-                        refreshList(fileName);
-                    });
-                }
+                $('#forcedSaveModal').modal('show');
             }
         }
     );
+}
+
+/**
+ * SQLファイル削除
+ */
+function doForcedSave()
+{
+    var fileName = document.getElementById('filename').value;
+    if(!fileName) return false;
+    var sqlText = document.getElementById('sqlText').value;
+
+    sqlapi('write', {f:fileName,t:sqlText}, function(response) {
+        refreshList(fileName);
+    });
 }
 
 /**
@@ -56,12 +65,10 @@ function doDelete()
     var fileName = document.getElementById('filename').value;
     if(!fileName) return false;
 
-    if(confirm(`${fileName} を削除します。よろしいですか？`) == true) {
-        sqlapi('delete', {f:fileName}, function (response) {
-            document.getElementById('filename').value = "";
-            refreshList();
-        });
-    }
+    sqlapi('delete', {f:fileName}, function (response) {
+        document.getElementById('filename').value = "";
+        refreshList();
+    });
 }
 
 /**

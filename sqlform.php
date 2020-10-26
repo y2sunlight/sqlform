@@ -8,6 +8,7 @@ require 'utilities.php';
 <html>
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="api-token" content="<?php echo generate_api_token()?>">
     <title>SqlForm</title>
 
@@ -41,7 +42,7 @@ require 'utilities.php';
                 <button type="button" id="btn_save" class="btn btn-primary pb-0" onclick="doSave()"><ion-icon name="save"></ion-icon></button>
             </li>
             <li class="nav-item mr-1">
-                <button type="button" id="btn_delete" class="btn btn-primary pb-0" onclick="doDelete()"><ion-icon name="trash"></ion-icon></button>
+                <button type="button" id="btn_delete" class="btn btn-primary pb-0" data-toggle="modal" data-target="#deleteModal"><ion-icon name="trash"></ion-icon></button>
             </li>
             <li class="nav-item">
                 <button type="button" id="btn_exec" class="btn btn-primary pb-0" onclick="doExec()"><ion-icon name="play"></ion-icon></button>
@@ -63,6 +64,36 @@ require 'utilities.php';
             </div>
         </div>
     </footer>
+
+    <!-- 削除Modal -->
+    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-body">
+              <span id="delete-dialog-msg"></span>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+            <button type="button" id="confirm-dialog-callback" class="btn btn-primary" onclick="doDelete();$('#deleteModal').modal('hide')">OK</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 上書き保存Modal -->
+    <div class="modal fade" id="forcedSaveModal" tabindex="-1" role="dialog" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-body">
+              <span id="save-dialog-msg"></span>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+            <button type="button" id="confirm-dialog-callback" class="btn btn-primary" onclick="doForcedSave();$('#forcedSaveModal').modal('hide')">OK</button>
+          </div>
+        </div>
+      </div>
+    </div>
 
 </body>
 </html>

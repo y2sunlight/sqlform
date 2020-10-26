@@ -1,18 +1,26 @@
 /**
  * onload
  */
-window.onload = function() {
+$(function(){
     // footer初期化
     showFooter();
     // SQLファイル一覧
     doList();
     // 初期SQLテキスト表示
     showInitialText();
-};
-
-$("#filename").on('input', function(){
-    // ボタンの有効化
-    enableButton();
+    // ファイル名ボックスinputイベント
+    $("#filename").on('input', function(){
+        // ボタンの有効化
+        enableButton();
+    });
+    // 削除ダイアログshowイベント
+    $('#deleteModal').on('show.bs.modal', function(e){
+        $('#delete-dialog-msg').text($('#filename').val() + ' を削除します。よろしいですか？');
+    });
+    // 上書き保存ダイアログイベント
+    $('#forcedSaveModal').on('show.bs.modal', function(e){
+        $('#save-dialog-msg').text($('#filename').val() + ' は既に存在します。上書き保存しますか？');
+    });
 });
 
 /**
@@ -37,8 +45,8 @@ function showFooter(msg, execTime, cssClass)
     if(execTime === undefined) execTime = "0.000";
     if(cssClass === undefined) cssClass = "no-error";
 
-    document.getElementById('message').innerHTML = `<span class="${cssClass}">${msg}</span>`;
-    document.getElementById('exec-time').innerHTML = `${execTime} sec`;
+    $('#message').html(`<span class="${cssClass}">${msg}</span>`);
+    $('#exec-time').html(`${execTime} sec`);
 }
 
 /**
@@ -46,5 +54,5 @@ function showFooter(msg, execTime, cssClass)
  */
 function showInitialText()
 {
-    document.getElementById('sqlText').innerHTML = "SELECT 'Hello, World!' as phrase;";
+    $('#sqlText').html('SELECT \'Hello, World!\' as phrase;');
 }
